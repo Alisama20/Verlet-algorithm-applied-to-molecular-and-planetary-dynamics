@@ -1,0 +1,4 @@
+# Keep GitHub language stats focused on the actual implementation (Python).
+# Hide figures from linguist.
+figures/**       linguist-documentation
+*.png            linguist-documentation
