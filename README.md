@@ -1,4 +1,4 @@
-# Solar System and Molecular Dynamics
+# N-body problem applied to molecular and planetary dynamics
 
 Two classical N-body simulations implemented in Python with Numba-accelerated Velocity-Verlet integration:
 
@@ -10,7 +10,6 @@ Two classical N-body simulations implemented in Python with Numba-accelerated Ve
 ## Repository layout
 
 ```
-Solar-System-and-Molecular-Dynamics/
 ├── solar_system/
 │   ├── initial_conditions.py   # Sun + 8-planet ICs (heliocentric units, G M_sun = 1)
 │   ├── verlet.py               # Velocity-Verlet N-body integrator + period measurement
@@ -30,10 +29,9 @@ Solar-System-and-Molecular-Dynamics/
 
 ### Solar System (heliocentric units)
 
-Natural units with $G M_\odot = 1$, $[\ell] = 1\,\text{AU}$, $[t] \approx 58.1\,\text{days}$ (so $T_\oplus = 2\pi$).  
-Kepler's third law becomes $T^2 = (2\pi)^2 a^3$.
+Natural units with $G M_\odot = 1$, $[\ell] = 1\ \text{AU}$, $[t] \approx 58.1\ \text{days}$ (so $T_\oplus = 2\pi$). Kepler's third law becomes $T^2 = (2\pi)^2 a^3$.
 
-The **Velocity-Verlet** scheme conserves the symplectic structure up to a global energy drift that scales as $O(\Delta t^2)$.
+The **Velocity-Verlet** scheme preserves the symplectic structure of Hamiltonian mechanics; the global energy drift scales as $O(\Delta t^2)$:
 
 $$
 \mathbf{r}(t+\Delta t) = \mathbf{r}(t) + \mathbf{v}(t)\,\Delta t + \tfrac{1}{2}\mathbf{a}(t)\,\Delta t^2
@@ -44,8 +42,11 @@ $$
 
 ### Planet formation
 
-A disk of $N = 1000$ equal-mass planetesimals orbits the Sun on slightly non-circular orbits.  
-At each time step: (i) each body advances under the Sun's gravity alone; (ii) any pair within their combined radius undergoes a **perfectly inelastic** collision conserving linear momentum. The collision cross-sections are artificially enlarged by a `growth_factor` so that merges are observable in 1000 steps.
+A disk of $N = 1000$ equal-mass planetesimals orbits the Sun on slightly non-circular orbits. At each step: (i) bodies advance under the Sun's gravity alone; (ii) any pair within their combined radius undergoes a **perfectly inelastic** collision that conserves linear momentum and assumes constant density after merging:
+
+$$
+R_{\rm new} = \left(R_i^3 + R_j^3\right)^{1/3}, \qquad \mathbf{v}_{\rm new} = \frac{m_i\,\mathbf{v}_i + m_j\,\mathbf{v}_j}{m_i + m_j}
+$$
 
 ### Lennard-Jones fluid (reduced units $\varepsilon = \sigma = m = k_B = 1$)
 
@@ -53,30 +54,72 @@ $$
 V(r) = 4\!\left[\left(\frac{1}{r}\right)^{12} - \left(\frac{1}{r}\right)^{6}\right], \quad r < r_{\rm cut} = 2.5\,\sigma
 $$
 
-The potential is **shifted** so $V(r_{\rm cut}) = 0$.  
-Forces include the **minimum-image convention** for periodic boundary conditions.  
-Instantaneous temperature: $T = \langle v^2 \rangle / 2$ (2D, per particle, $k_B = 1$).
+The potential is **shifted** so $V(r_{\rm cut}) = 0$. Forces use the **minimum-image convention** for periodic boundary conditions. Instantaneous temperature in 2D: $T = \langle v^2 \rangle / 2$ per particle.
 
 ---
 
-## Figures
+## Results
 
-| File | Description |
-|------|-------------|
-| `figures/solar_inner.png` | Orbits of the inner planets (Mercury – Mars) |
-| `figures/solar_outer.png` | Orbits of the outer planets (Jupiter – Neptune) |
-| `figures/solar_energy.png` | Relative energy drift $(E(t)-E_0)/\|E_0\|$ |
-| `figures/formation_disk.png` | Initial planetesimal disk coloured by distance |
-| `figures/formation_final.png` | Survivors after merging (symbol area ∝ mass) |
-| `figures/formation_mass.png` | Cumulative mass distribution of survivors |
-| `figures/md_energy.png` | KE, PE, and total energy vs time |
-| `figures/md_temperature.png` | Instantaneous temperature vs time |
-| `figures/md_snapshots.png` | Particle positions at $t = 0$ and $t = t_{\rm end}$ |
-| `figures/md_rdf.png` | Radial distribution function $g(r)$ |
+### Solar System — orbits
+
+Integrated for 200 000 steps ($\Delta t = 10^{-3}$). Relative energy drift: $\max|dE/E_0| = 1.8 \times 10^{-9}$.
+
+| | |
+|:---:|:---:|
+| ![Inner planets](figures/solar_inner.png) | ![Outer planets](figures/solar_outer.png) |
+| Inner Solar System (Mercury – Mars) | Outer Solar System (Jupiter – Neptune) |
+
+![Energy conservation](figures/solar_energy.png)
+
+#### Orbital periods
+
+| Planet | Numerical [d] | Real [d] | Error |
+|--------|:-------------:|:--------:|:-----:|
+| Mercury | 84.4 | 88.0 | 4.1 % |
+| Venus | 213.4 | 224.7 | 5.0 % |
+| Earth | 371.7 | 365.2 | 1.8 % |
+| Mars | 676.4 | 687.0 | 1.5 % |
+| Jupiter | 4 310 | 4 331 | 0.5 % |
+| Saturn | 10 843 | 10 747 | 0.9 % |
+
+The small period errors for the inner planets arise from the initial conditions placing all bodies on the +x axis — the asymmetric start introduces a transient that averages out after several orbits.
 
 ---
 
-## Requirements and usage
+### Planet formation — 1 000 planetesimals, 1 000 steps
+
+626 merges reduce the initial disk from 1 000 to **374 surviving bodies**.
+
+| | |
+|:---:|:---:|
+| ![Initial disk](figures/formation_disk.png) | ![Final state](figures/formation_final.png) |
+| Initial planetesimal disk (coloured by distance) | Survivors after merging (symbol area ∝ mass) |
+
+![Mass distribution](figures/formation_mass.png)
+
+The cumulative mass distribution shows a power-law tail: a few massive bodies accrete most of the material near the inner disk, while the outer disk remains largely unmerged.
+
+---
+
+### Lennard-Jones fluid — $N = 100$, $\rho^* = 0.6$, $T^* = 1.0$
+
+5 000 steps with $\Delta t = 0.005\,\tau$. Relative energy drift: $\max|dE/E_0| = 1.3 \times 10^{-3}$.
+
+| | |
+|:---:|:---:|
+| ![Energy](figures/md_energy.png) | ![Temperature](figures/md_temperature.png) |
+| Kinetic, potential and total energy | Instantaneous temperature |
+
+| | |
+|:---:|:---:|
+| ![Snapshots](figures/md_snapshots.png) | ![RDF](figures/md_rdf.png) |
+| Particle positions at $t=0$ and $t=t_{\rm end}$ | Radial distribution function $g(r)$ |
+
+The RDF shows a pronounced first peak near $r \approx 1.1\,\sigma$ (the LJ potential minimum) and oscillations that decay to 1, consistent with a dense liquid phase at $\rho^* = 0.6$, $T^* = 1.0$.
+
+---
+
+## Usage
 
 ```bash
 pip install numpy numba matplotlib
@@ -88,24 +131,6 @@ python scripts/run_formation.py
 python scripts/run_md.py
 ```
 
-All scripts write their output to `figures/` and print a short summary to stdout.
+All scripts write output to `figures/` and print a summary to stdout.
 
-> **Note on Numba compilation**: the first run JIT-compiles the hot loops (~10–30 s). Subsequent runs use the cached bytecode and are much faster.
-
----
-
-## Results
-
-### Solar System — orbital periods
-
-| Planet   | Numerical [d] | Real [d] | Error |
-|----------|--------------|----------|-------|
-| Mercury  | ~88          | 88.0     | < 1 % |
-| Venus    | ~225         | 224.7    | < 1 % |
-| Earth    | ~365         | 365.2    | < 1 % |
-| Mars     | ~687         | 687.0    | < 1 % |
-| Jupiter  | ~4 330       | 4 331    | < 1 % |
-
-### LJ fluid energy conservation
-
-With $\Delta t = 0.005\,\tau$ the relative energy drift $|dE/E_0|$ stays below $10^{-3}$ over 5 000 steps.
+> **Numba JIT compilation**: the first run compiles the hot loops (~10–30 s). Subsequent runs use the cached bytecode and are significantly faster.
