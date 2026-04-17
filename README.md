@@ -2,7 +2,7 @@
 
 Two classical N-body simulations implemented in Python with Numba-accelerated Velocity-Verlet integration:
 
-1. **Solar System** — gravitational N-body integrator for the 8-planet Solar System, plus a planet-formation toy model with inelastic collisions between planetesimals.
+1. **Solar System** — gravitational N-body integrator for the 8-planet Solar System, plus a planet-formation model with inelastic collisions between planetesimals.
 2. **Molecular Dynamics** — 2D Lennard-Jones fluid with periodic boundary conditions; tracks energy conservation, temperature, and radial distribution function.
 
 ---
