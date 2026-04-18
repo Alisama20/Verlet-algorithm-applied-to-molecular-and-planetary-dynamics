@@ -134,3 +134,12 @@ python scripts/run_md.py
 All scripts write output to `figures/` and print a summary to stdout.
 
 > **Numba JIT compilation**: the first run compiles the hot loops (~10–30 s). Subsequent runs use the cached bytecode and are significantly faster.
+
+---
+
+## Author
+
+**A. S. Amari Rabah**
+
+Developed as part of the coursework for *Computational Physics* —
+Bachelor's Degree in Physics, University of Granada, Spain.
