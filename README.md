@@ -55,9 +55,7 @@ V(r) = 4\!\left[\left(\frac{1}{r}\right)^{12} - \left(\frac{1}{r}\right)^{6}\rig
 $$
 
 The potential is **shifted** so $V(r_{\rm cut}) = 0$. Forces use the **minimum-image convention** for periodic boundary conditions. Instantaneous temperature in 2D: $T = \langle v^2 \rangle / 2$ per particle.
-
 ---
-
 ## Results
 
 ### Solar System — orbits
@@ -83,9 +81,7 @@ Integrated for 200 000 steps ($\Delta t = 10^{-3}$). Relative energy drift: $\ma
 | Saturn | 10 843 | 10 747 | 0.9 % |
 
 The small period errors for the inner planets arise from the initial conditions placing all bodies on the +x axis — the asymmetric start introduces a transient that averages out after several orbits.
-
 ---
-
 ### Planet formation — 1 000 planetesimals, 1 000 steps
 
 626 merges reduce the initial disk from 1 000 to **374 surviving bodies**.
@@ -98,9 +94,7 @@ The small period errors for the inner planets arise from the initial conditions 
 ![Mass distribution](figures/formation_mass.png)
 
 The cumulative mass distribution shows a power-law tail: a few massive bodies accrete most of the material near the inner disk, while the outer disk remains largely unmerged.
-
 ---
-
 ### Lennard-Jones fluid — $N = 100$, $\rho^* = 0.6$, $T^* = 1.0$
 
 5 000 steps with $\Delta t = 0.005\,\tau$. Relative energy drift: $\max|dE/E_0| = 1.3 \times 10^{-3}$.
@@ -116,9 +110,7 @@ The cumulative mass distribution shows a power-law tail: a few massive bodies ac
 | Particle positions at $t=0$ and $t=t_{\rm end}$ | Radial distribution function $g(r)$ |
 
 The RDF shows a pronounced first peak near $r \approx 1.1\,\sigma$ (the LJ potential minimum) and oscillations that decay to 1, consistent with a dense liquid phase at $\rho^* = 0.6$, $T^* = 1.0$.
-
 ---
-
 ## Usage
 
 ```bash
@@ -134,9 +126,7 @@ python scripts/run_md.py
 All scripts write output to `figures/` and print a summary to stdout.
 
 > **Numba JIT compilation**: the first run compiles the hot loops (~10–30 s). Subsequent runs use the cached bytecode and are significantly faster.
-
 ---
-
 ## Author
 
 **A. S. Amari Rabah**
