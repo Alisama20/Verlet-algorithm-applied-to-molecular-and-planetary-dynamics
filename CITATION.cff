@@ -1,0 +1,13 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+authors:
+  - family-names: "Amari Rabah"
+    given-names: "A. S."
+    orcid: "https://orcid.org/0009-0008-2629-7371"
+title: "Verlet Algorithm for Molecular and Planetary Dynamics"
+version: 1.0.0
+date-released: 2026-05-22
+url: "https://github.com/Alisama20/Verlet-algorithm-applied-to-molecular-and-planetary-dynamics"
+repository-code: "https://github.com/Alisama20/Verlet-algorithm-applied-to-molecular-and-planetary-dynamics"
+license: GPL-2.0-only
